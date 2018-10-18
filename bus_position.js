@@ -45,7 +45,7 @@ function get_position_all_buses(sampling_rate){
       });
     })
     .catch((error) =>{
-      console.log("Error pn getting data");
+      console.log("Error on getting data");
       console.log(error);
     })
   }, sampling_rate * 1000);
