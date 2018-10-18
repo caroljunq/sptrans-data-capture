@@ -1,0 +1,24 @@
+{
+  "name": "sptrans-data-capture",
+  "version": "1.0.0",
+  "description": "Scripts for getting bus information from SP Trans API (Public Transportation in São Paulo - Brazil).",
+  "main": "bus_position.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caroljunq/sptrans-data-capture.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caroljunq/sptrans-data-capture/issues"
+  },
+  "homepage": "https://github.com/caroljunq/sptrans-data-capture#readme",
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "set-cookie-parser": "^2.2.1"
+  }
+}
