@@ -10,7 +10,7 @@ let cookieString = ''
 
 
 // Getting position for all buses in SPTrans
-function get_position_all_buses(sampling_rate){
+function get_position_all_buses(sampling_rate,time_update){
 
   let options_position = {
     method: 'GET',
@@ -20,10 +20,17 @@ function get_position_all_buses(sampling_rate){
       'Cookie': 'apiCredentials='+cookieString
     }
   }
+  time_accumulated = 0
 
   // Run each 5 seconds
   setInterval(function() {
     let date;
+    time_accumulated += sampling_rate * 1000
+
+    // Getting new authentication every time_update seconds
+    if(time_accumulated%(time_update*1000) == 0 && time_accumulated != 0){
+      auth();
+    }
     let p1 = new Promise((resolve, reject) => {
       date = new Date()
       request(options_position,function(error, res, body){
@@ -51,22 +58,43 @@ function get_position_all_buses(sampling_rate){
   }, sampling_rate * 1000);
 }
 
-// Authentication
-let options_auth = {
-    method: 'POST',
-    uri: url_base + login_route + token,
-    json: true // Automatically stringifies the body to JSON
-};
 
 // Authentication
-request(options_auth, function(error, response, body){
-  if(response.statusCode == 200){
-    let combinedCookieHeader = response.headers['set-cookie'];
-    let splitCookieHeaders = setCookie.splitCookiesString(combinedCookieHeader);
-    let cookies = setCookie.parse(splitCookieHeaders);
-    cookieString = cookies[0].value;
-    get_position_all_buses(5);
-  }else{
-    console.log("Authentication error")
-  }
-});
+function auth(){
+  // Authentication
+  let options_auth = {
+      method: 'POST',
+      uri: url_base + login_route + token,
+      json: true // Automatically stringifies the body to JSON
+  };
+
+  return new Promise((resolve, reject) => {
+    request(options_auth, function(error, response, body){
+      if(response.statusCode == 200){
+        let combinedCookieHeader = response.headers['set-cookie'];
+        let splitCookieHeaders = setCookie.splitCookiesString(combinedCookieHeader);
+        let cookies = setCookie.parse(splitCookieHeaders);
+        cookieString = cookies[0].value;
+        console.log(cookieString)
+        resolve("Authentication ok!");
+      }else{
+        reject("Authentication error");
+      }
+    });
+  })
+  .then((msg) =>{
+    console.log(msg)
+  })
+  .catch((err) =>{
+    console.log(err)
+  })
+}
+
+// Authentication - first call
+auth()
+.then((success)=>{
+  get_position_all_buses(60,600)
+})
+.catch((error)=>{
+  console.log("Error first authentication!")
+})
