@@ -12,14 +12,6 @@ let cookieString = ''
 // Getting position for all buses in SPTrans
 function get_position_all_buses(sampling_rate,time_update){
 
-  let options_position = {
-    method: 'GET',
-    uri: url_base + 'Posicao',
-    json: true, // Automatically stringifies the body to JSON,
-    headers:{
-      'Cookie': 'apiCredentials='+cookieString
-    }
-  }
   time_accumulated = 0
 
   // Run each 5 seconds
@@ -31,6 +23,15 @@ function get_position_all_buses(sampling_rate,time_update){
     if(time_accumulated%(time_update*1000) == 0 && time_accumulated != 0){
       auth();
     }
+    let options_position = {
+      method: 'GET',
+      uri: url_base + 'Posicao',
+      json: true, // Automatically stringifies the body to JSON,
+      headers:{
+        'Cookie': 'apiCredentials='+cookieString
+      }
+    }
+
     let p1 = new Promise((resolve, reject) => {
       date = new Date()
       request(options_position,function(error, res, body){
